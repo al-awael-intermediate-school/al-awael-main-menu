@@ -1,11 +1,33 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>الرئيسية - منصة متوسطة وثانوية الأوائل</title>
+
+    <!-- ========= Additional Security Programs ========== -->
+    <!-- 1. Prevent page loading within iframe (Clickjacking Protection) -->
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <!-- 2. Prevent the browser from guessing the MIME type (prevents the execution of malicious files) -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <!-- 3. Restricting access to dangerous features -->
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=(), payment=(), usb=(), bluetooth=(), accelerometer=(), gyroscope=()">
+    <!-- 4. Content Security Policy (CSP) - السماح بإطارات Wordwall -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https:;
+        style-src 'self' 'unsafe-inline' https:;
+        font-src 'self' https: data:;
+        img-src 'self' data: https: blob:;
+        connect-src 'self' https:;
+        frame-src 'self' https://wordwall.net;
+        object-src 'none';
+        base-uri 'self';
+        form-action 'self';
+    ">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <link rel="icon" type="image/png" href="https://i.postimg.cc/FH3FLXRR/abroad.png">
     
@@ -33,7 +55,6 @@
             line-height: 1.6;
         }
 
-        /* شاشة التحميل (Loading Screen) */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -65,7 +86,6 @@
             font-family: Arial, sans-serif;
         }
 
-        /* مربع الحساب */
         .account-wrapper {
             position: fixed;
             top: 0;
@@ -79,7 +99,6 @@
             align-items: center;
         }
         
-        /* Skeleton loader للـ popup */
         .account-skeleton {
             width: 320px;
             padding: 24px;
@@ -155,7 +174,7 @@
             border: 1px solid #e2e8f0;
             padding: 24px;
             width: 90%;
-            max-width: 320px;
+            max-width: 360px;
             border-radius: 16px;
             font-family: 'Segoe UI', Tahoma, sans-serif;
             background-color: #ffffff;
@@ -166,8 +185,8 @@
         }
         
         .profile-circle {
-            width: 75px;
-            height: 75px;
+            width: 80px;
+            height: 80px;
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             border-radius: 50%;
             margin: 0 auto 16px auto;
@@ -175,6 +194,22 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-circle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .profile-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
         
         .profile-circle .material-symbols-outlined {
@@ -183,11 +218,36 @@
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
         }
         
+        .avatar-edit-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            font-size: 10px;
+            padding: 4px 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 0 0 50% 50%;
+        }
+        
+        .profile-circle:hover .avatar-edit-overlay {
+            opacity: 1;
+        }
+        
         .account-box h3 {
             margin: 0 0 8px 0;
             color: #1e293b;
             font-size: 1.3rem;
             font-weight: 600;
+        }
+        
+        .account-box .user-email-display {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            word-break: break-all;
         }
         
         .account-box p {
@@ -218,12 +278,145 @@
             border-radius: 3px;
         }
         
+        .edit-profile-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+            text-align: right;
+        }
+        
+        .edit-profile-section label {
+            display: block;
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        
+        .edit-profile-section input[type="text"],
+        .edit-profile-section input[type="email"] {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            transition: border-color 0.3s;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            direction: rtl;
+        }
+        
+        .edit-profile-section input[type="text"]:focus,
+        .edit-profile-section input[type="email"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .avatar-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+            justify-content: center;
+        }
+        
+        .avatar-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            object-fit: cover;
+            background-color: #f1f5f9;
+        }
+        
+        .avatar-option:hover {
+            border-color: #3b82f6;
+            transform: scale(1.1);
+        }
+        
+        .avatar-option.selected {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        .file-upload-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        
+        .file-upload-btn {
+            background: #f1f5f9;
+            border: 1px dashed #94a3b8;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: #475569;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .file-upload-btn:hover {
+            background: #e2e8f0;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+        
+        .file-upload-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+        }
+        
+        .save-profile-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            transition: all 0.2s;
+            width: 100%;
+            font-weight: 500;
+        }
+        
+        .save-profile-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+        }
+        
+        .save-success {
+            color: #10b981;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         .close-account-btn {
             background: #e2e8f0;
             border: none;
             padding: 8px 20px;
             border-radius: 30px;
-            margin-top: 20px;
+            margin-top: 15px;
             cursor: pointer;
             color: #475569;
             font-size: 0.8rem;
@@ -234,7 +427,6 @@
             background: #cbd5e1;
         }
 
-        /* باقي التصميم */
         .container {
             width: 90%;
             max-width: 1200px;
@@ -355,7 +547,6 @@
             background-color: #f0f2f5;
         }
 
-        /* مودال الخروج */
         .exit-modal {
             display: none;
             position: fixed;
@@ -422,7 +613,6 @@
             font-size: 20px;
         }
 
-        /* مودال الدعم الفني */
         .modal {
             display: none;
             position: fixed;
@@ -495,7 +685,6 @@
             background-color: #1e2b38;
         }
         
-        /* تنسيق زر Outlook داخل الإشعار */
         .outlook-link-btn {
             display: inline-flex;
             align-items: center;
@@ -541,10 +730,28 @@
             color: white;
             cursor: pointer;
             transition: transform 0.2s;
+            overflow: hidden;
+        }
+        
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
         
         .user-avatar:hover {
             transform: scale(1.05);
+        }
+        
+        .header-username {
+            font-size: 0.9rem;
+            color: var(--dark-color);
+            font-weight: 500;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .notification-icon {
@@ -937,7 +1144,6 @@
             color: #777;
         }
 
-        /* ========== تحسينات الجوال ========== */
         @media (max-width: 992px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -952,11 +1158,10 @@
             .user-menu {
                 gap: 8px;
             }
-            /* إخفاء النص وإظهار الأيقونة فقط في الجوال */
             .apps-btn span, .support-btn span {
                 display: none;
             }
-            .user-menu > span {
+            .header-username {
                 display: none;
             }
         }
@@ -1038,15 +1243,12 @@
 </head>
 <body>
 
-    <!-- شاشة الـ Loading الرئيسية -->
     <div id="loadingScreen" class="loading-screen">
         <img src="https://i.postimg.cc/pVKgzQM8/sand-clock.png" alt="Loading">
-        <div class="loading-text">جَارٍ التَّحْمِيلُ...</div>
+        <div class="loading-text">جَارٍ التَّحْمِيلُ...</div>
     </div>
 
-    <!-- مربع الحساب المنبثق (يظهر عند الضغط على الصورة) -->
     <div id="accountWrapper" class="account-wrapper">
-        <!-- Skeleton loader يظهر أثناء التحميل -->
         <div id="accountSkeleton" class="account-skeleton">
             <div class="skeleton-circle"></div>
             <div class="skeleton-title"></div>
@@ -1054,13 +1256,44 @@
             <div class="skeleton-text"></div>
             <div class="skeleton-button"></div>
         </div>
-        <!-- المحتوى الحقيقي (يظهر بعد ثانية) -->
         <div id="accountBox" class="account-box">
-            <div class="profile-circle">
-                <span class="material-symbols-outlined">account_circle</span>
+            <div class="profile-circle" id="profileCirclePopup" title="انقر لتغيير الصورة">
+                <span class="material-symbols-outlined" id="defaultAvatarIcon">account_circle</span>
+                <img id="profileImagePopup" src="" alt="صورة المستخدم" style="display: none;">
+                <div class="avatar-edit-overlay">تغيير</div>
             </div>
-            <h3>مستخدم لمنصة الأوائل</h3>
+            <h3 id="displayName">مستخدم لمنصة الأوائل</h3>
+            <div class="user-email-display" id="displayEmail"></div>
             <div class="divider"></div>
+            
+            <div class="edit-profile-section">
+                <label for="editNameInput">الاسم</label>
+                <input type="text" id="editNameInput" placeholder="أدخل اسمك" maxlength="30">
+                
+                <label for="editEmailInput">البريد الإلكتروني</label>
+                <input type="email" id="editEmailInput" placeholder="example@email.com">
+                
+                <label>اختر صورة</label>
+                <div class="avatar-options" id="avatarOptions">
+                    <img src="https://i.postimg.cc/mrDm4RRc/dylan-1778948190666.png" class="avatar-option" data-avatar="https://i.postimg.cc/mrDm4RRc/dylan-1778948190666.png" alt="Avatar 1" onclick="selectAvatar(this)">
+                    <img src="https://i.postimg.cc/5yw3g2q6/dylan-1778948200197.png" class="avatar-option" data-avatar="https://i.postimg.cc/5yw3g2q6/dylan-1778948200197.png" alt="Avatar 2" onclick="selectAvatar(this)">
+                    <img src="https://i.postimg.cc/J4LKnjMn/dylan-1778948206376.png" class="avatar-option" data-avatar="https://i.postimg.cc/J4LKnjMn/dylan-1778948206376.png" alt="Avatar 3" onclick="selectAvatar(this)">
+                    <img src="https://i.postimg.cc/4x45vZYL/dylan-1778948196954.png" class="avatar-option" data-avatar="https://i.postimg.cc/4x45vZYL/dylan-1778948196954.png" alt="Avatar 4" onclick="selectAvatar(this)">
+                </div>
+                
+                <div class="file-upload-wrapper">
+                    <button class="file-upload-btn">
+                        <i class="fas fa-upload"></i> رفع من الجهاز
+                    </button>
+                    <input type="file" class="file-upload-input" id="fileUploadInput" accept="image/*">
+                </div>
+                
+                <button class="save-profile-btn" id="saveProfileBtn">
+                    <i class="fas fa-save"></i> حفظ التغييرات
+                </button>
+                <div class="save-success" id="saveSuccess">✓ تم الحفظ بنجاح</div>
+            </div>
+            
             <p>لرؤية تفاصيل الحساب يرجى الذهاب إلى 
                 <a href="https://schools.madrasati.sa" target="_blank">منصة مدرستي</a>
             </p>
@@ -1068,7 +1301,6 @@
         </div>
     </div>
 
-    <!-- باقي محتوى المنصة -->
     <header>
         <div class="container">
             <div class="header-content">
@@ -1113,10 +1345,11 @@
                         <span>الدعم الفني</span>
                     </button>
                     
-                    <div class="user-avatar" id="profileBtn">
-                        <i class="fas fa-user"></i>
+                    <div class="user-avatar" id="profileBtn" title="الملف الشخصي">
+                        <i class="fas fa-user" id="headerDefaultIcon"></i>
+                        <img id="headerAvatarImg" src="" alt="صورة المستخدم" style="display: none;">
                     </div>
-                    <span>مستخدم لمنصة الأوائل</span>
+                    <span class="header-username" id="headerUsername">مستخدم لمنصة الأوائل</span>
                 </div>
             </div>
         </div>
@@ -1126,8 +1359,7 @@
         <div class="container">
             <ul class="nav-links">
                 <li><a href="https://Restudio-Education.github.io/al-awael-main-menu/" class="active"><i class="fas fa-home"></i> الرئيسية</a></li>
-                <li><a href="https://Restudio-Education.github.io/al-awael-Study-materials/
-"><i class="fas fa-book"></i> المواد الدراسية</a></li>
+                <li><a href="https://Restudio-Education.github.io/al-awael-Study-materials/"><i class="fas fa-book"></i> المواد الدراسية</a></li>
                 <li><a href="https://Restudio-Education.github.io/al-awael-homework/"><i class="fas fa-tasks"></i> الواجبات</a></li>
                 <li><a href="https://Restudio-Education.github.io/al-awael-Calendar/"><i class="fas fa-calendar-alt"></i> التقويم</a></li>
                 <li><a href="https://Restudio-Education.github.io/al-awael-Reports/"><i class="fas fa-chart-bar"></i> التقارير</a></li>
@@ -1141,34 +1373,26 @@
         <div class="main-content">
             <div class="main-area">
                 <div class="welcome-banner">
-                    <h2>مَرْحَبًا بِكَ, مستخدم منصة الأوائل!</h2>
-                    <p>أَهْلًا بِكَ فِي مَنْصَّةِ مُتَوَسِّطَةِ وَثَانَوِيَّةِ الْأَوَائِلِ</p>
+                    <h2 id="welcomeMessage">مَرْحَبًا بِكَ, مستخدم منصة الأوائل!</h2>
+                    <p>أَهْلًا بِكَ فِي مَنْصَّةِ مُتَوَسِّطَةِ وَثَانَوِيَّةِ الْأَوَائِلِ</p>
                 </div>
                 
                 <div class="images-section">
                     <div class="from-wikipedia">
                         <span>from</span>
-                        <img src="https://i.postimg.cc/wBk3FGNZ/pngimg-com-wikipedia-PNG11.png" 
-                             alt="Wikipedia" 
-                             class="wikipedia-icon">
+                        <img src="https://i.postimg.cc/wBk3FGNZ/pngimg-com-wikipedia-PNG11.png" alt="Wikipedia" class="wikipedia-icon">
                         <span>مشاريع المعرفة الحرة</span>
                     </div>
                     
                     <div class="baby-globe-row">
                         <div class="globe-side">
-                            <img src="https://i.postimg.cc/ppRkbSd2/baby-globe-wikipedia.gif" 
-                                 alt="Baby Globe Wikipedia" 
-                                 class="globe-img-side">
+                            <img src="https://i.postimg.cc/ppRkbSd2/baby-globe-wikipedia.gif" alt="Baby Globe Wikipedia" class="globe-img-side">
                         </div>
                         <div class="globe-center">
-                            <img src="https://i.postimg.cc/Vs0mkh61/Neutral-Baby-Globe.gif" 
-                                 alt="Baby Globe" 
-                                 class="globe-img-main">
+                            <img src="https://i.postimg.cc/Vs0mkh61/Neutral-Baby-Globe.gif" alt="Baby Globe" class="globe-img-main">
                         </div>
                         <div class="globe-side">
-                            <img src="https://i.postimg.cc/4mVPrgGy/baby-globe-wikipedia-(1).gif" 
-                                 alt="Baby Globe Wikipedia" 
-                                 class="globe-img-side">
+                            <img src="https://i.postimg.cc/4mVPrgGy/baby-globe-wikipedia-(1).gif" alt="Baby Globe Wikipedia" class="globe-img-side">
                         </div>
                     </div>
                     
@@ -1176,23 +1400,17 @@
                     
                     <div class="projects-row">
                         <a href="#" data-external="https://ar.wikipedia.org" class="wiki-project-card external-link">
-                            <img src="https://i.postimg.cc/PqZfFFwq/Wikipedia-logo-v2-svg.png" 
-                                 alt="Wikipedia" 
-                                 class="wiki-project-img">
+                            <img src="https://i.postimg.cc/PqZfFFwq/Wikipedia-logo-v2-svg.png" alt="Wikipedia" class="wiki-project-img">
                             <div class="project-name">ويكيبيديا</div>
                             <div class="project-desc">الموسوعة الحرة</div>
                         </a>
                         <a href="#" data-external="https://ar.wiktionary.org" class="wiki-project-card external-link">
-                            <img src="https://i.postimg.cc/PxwDy4tv/Wiktionary-propsed-smurrayinchester.png" 
-                                 alt="Wiktionary" 
-                                 class="wiki-project-img">
+                            <img src="https://i.postimg.cc/PxwDy4tv/Wiktionary-propsed-smurrayinchester.png" alt="Wiktionary" class="wiki-project-img">
                             <div class="project-name">ويكاموس</div>
                             <div class="project-desc">قاموس حر متعدد اللغات</div>
                         </a>
                         <a href="#" data-external="https://ar.wikinews.org" class="wiki-project-card external-link">
-                            <img src="https://i.postimg.cc/pLSySFc6/Wikinews-logo-en.png" 
-                                 alt="Wikinews" 
-                                 class="wiki-project-img">
+                            <img src="https://i.postimg.cc/pLSySFc6/Wikinews-logo-en.png" alt="Wikinews" class="wiki-project-img">
                             <div class="project-name">ويكي أخبار</div>
                             <div class="project-desc">مصدرك للأخبار الحرة</div>
                         </a>
@@ -1287,7 +1505,6 @@
         </div>
     </div>
 
-    <!-- شاشة تأكيد الخروج للمواقع الخارجية -->
     <div id="exitModal" class="exit-modal">
         <div class="exit-modal-content">
             <img src="https://i.postimg.cc/667NrLqs/emergency-exit.png" alt="exit icon">
@@ -1299,7 +1516,6 @@
         </div>
     </div>
 
-    <!-- مودال الدعم الفني -->
     <div id="supportModal" class="modal">
         <div class="modal-content">
             <div class="modal-logo">
@@ -1315,7 +1531,6 @@
         </div>
     </div>
 
-    <!-- مودال الإشعارات -->
     <div id="notificationModal" class="modal">
         <div class="modal-content">
             <div class="modal-logo">
@@ -1352,7 +1567,215 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // إخفاء شاشة التحميل الرئيسية بعد 2 ثانية
+            // ========== إعدادات localStorage ==========
+            const STORAGE_KEY = 'alawael_user_profile';
+            
+            function getProfile() {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    try {
+                        return JSON.parse(saved);
+                    } catch(e) {
+                        return getDefaultProfile();
+                    }
+                }
+                return getDefaultProfile();
+            }
+            
+            function getDefaultProfile() {
+                return {
+                    name: 'مستخدم لمنصة الأوائل',
+                    email: '',
+                    avatar: '' // فارغ = الأيقونة الافتراضية
+                };
+            }
+            
+            function saveProfile(profile) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+            }
+            
+            let currentProfile = getProfile();
+            let selectedAvatar = currentProfile.avatar || '';
+            
+            // ========== تحديث واجهة المستخدم ==========
+            function updateAllUI() {
+                // تحديث الاسم في الهيدر
+                const headerUsername = document.getElementById('headerUsername');
+                if (headerUsername) {
+                    headerUsername.textContent = currentProfile.name;
+                }
+                
+                // تحديث رسالة الترحيب
+                const welcomeMessage = document.getElementById('welcomeMessage');
+                if (welcomeMessage) {
+                    welcomeMessage.textContent = `مَرْحَبًا بِكَ, ${currentProfile.name}!`;
+                }
+                
+                // تحديث الأفاتار في الهيدر
+                updateHeaderAvatar();
+                
+                // تحديث محتوى البوب أب
+                updatePopupFields();
+            }
+            
+            function updateHeaderAvatar() {
+                const headerDefaultIcon = document.getElementById('headerDefaultIcon');
+                const headerAvatarImg = document.getElementById('headerAvatarImg');
+                
+                if (currentProfile.avatar) {
+                    if (headerDefaultIcon) headerDefaultIcon.style.display = 'none';
+                    if (headerAvatarImg) {
+                        headerAvatarImg.src = currentProfile.avatar;
+                        headerAvatarImg.style.display = 'block';
+                    }
+                } else {
+                    if (headerDefaultIcon) headerDefaultIcon.style.display = 'block';
+                    if (headerAvatarImg) {
+                        headerAvatarImg.src = '';
+                        headerAvatarImg.style.display = 'none';
+                    }
+                }
+            }
+            
+            function updatePopupFields() {
+                const displayName = document.getElementById('displayName');
+                const displayEmail = document.getElementById('displayEmail');
+                const editNameInput = document.getElementById('editNameInput');
+                const editEmailInput = document.getElementById('editEmailInput');
+                
+                if (displayName) displayName.textContent = currentProfile.name;
+                if (displayEmail) displayEmail.textContent = currentProfile.email || '';
+                if (editNameInput) editNameInput.value = currentProfile.name;
+                if (editEmailInput) editEmailInput.value = currentProfile.email || '';
+                
+                updatePopupAvatar();
+                highlightSelectedAvatar();
+            }
+            
+            function updatePopupAvatar() {
+                const defaultAvatarIcon = document.getElementById('defaultAvatarIcon');
+                const profileImagePopup = document.getElementById('profileImagePopup');
+                
+                if (currentProfile.avatar) {
+                    if (defaultAvatarIcon) defaultAvatarIcon.style.display = 'none';
+                    if (profileImagePopup) {
+                        profileImagePopup.src = currentProfile.avatar;
+                        profileImagePopup.style.display = 'block';
+                    }
+                } else {
+                    if (defaultAvatarIcon) defaultAvatarIcon.style.display = 'block';
+                    if (profileImagePopup) {
+                        profileImagePopup.src = '';
+                        profileImagePopup.style.display = 'none';
+                    }
+                }
+            }
+            
+            function highlightSelectedAvatar() {
+                const avatarOptions = document.querySelectorAll('.avatar-option');
+                avatarOptions.forEach(opt => {
+                    if (opt.getAttribute('data-avatar') === selectedAvatar) {
+                        opt.classList.add('selected');
+                    } else {
+                        opt.classList.remove('selected');
+                    }
+                });
+            }
+            
+            // ========== اختيار الأفاتار ==========
+            window.selectAvatar = function(element) {
+                selectedAvatar = element.getAttribute('data-avatar');
+                highlightSelectedAvatar();
+                
+                // معاينة فورية في البوب أب
+                const defaultAvatarIcon = document.getElementById('defaultAvatarIcon');
+                const profileImagePopup = document.getElementById('profileImagePopup');
+                if (selectedAvatar) {
+                    if (defaultAvatarIcon) defaultAvatarIcon.style.display = 'none';
+                    if (profileImagePopup) {
+                        profileImagePopup.src = selectedAvatar;
+                        profileImagePopup.style.display = 'block';
+                    }
+                }
+            };
+            
+            // ========== رفع صورة من الجهاز ==========
+            const fileUploadInput = document.getElementById('fileUploadInput');
+            if (fileUploadInput) {
+                fileUploadInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            selectedAvatar = event.target.result;
+                            // إزالة التحديد عن الصور المسبقة
+                            document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
+                            // تحديث المعاينة
+                            const defaultAvatarIcon = document.getElementById('defaultAvatarIcon');
+                            const profileImagePopup = document.getElementById('profileImagePopup');
+                            if (defaultAvatarIcon) defaultAvatarIcon.style.display = 'none';
+                            if (profileImagePopup) {
+                                profileImagePopup.src = selectedAvatar;
+                                profileImagePopup.style.display = 'block';
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        alert('الرجاء اختيار ملف صورة صالح.');
+                    }
+                });
+            }
+            
+            // ========== حفظ التغييرات ==========
+            const saveProfileBtn = document.getElementById('saveProfileBtn');
+            const saveSuccess = document.getElementById('saveSuccess');
+            
+            if (saveProfileBtn) {
+                saveProfileBtn.addEventListener('click', function() {
+                    const editNameInput = document.getElementById('editNameInput');
+                    const editEmailInput = document.getElementById('editEmailInput');
+                    
+                    const newName = editNameInput ? editNameInput.value.trim() : '';
+                    const newEmail = editEmailInput ? editEmailInput.value.trim() : '';
+                    
+                    if (!newName) {
+                        alert('الرجاء إدخال اسم المستخدم.');
+                        return;
+                    }
+                    
+                    // تحديث الملف الشخصي
+                    currentProfile.name = newName;
+                    currentProfile.email = newEmail;
+                    currentProfile.avatar = selectedAvatar;
+                    
+                    // حفظ في localStorage
+                    saveProfile(currentProfile);
+                    
+                    // تحديث واجهة المستخدم
+                    updateAllUI();
+                    
+                    // إظهار رسالة النجاح
+                    if (saveSuccess) {
+                        saveSuccess.style.display = 'block';
+                        setTimeout(() => {
+                            saveSuccess.style.display = 'none';
+                        }, 2000);
+                    }
+                });
+            }
+            
+            // ========== النقر على الأفاتار في البوب أب لفتح رفع الملفات ==========
+            const profileCirclePopup = document.getElementById('profileCirclePopup');
+            if (profileCirclePopup && fileUploadInput) {
+                profileCirclePopup.addEventListener('click', function() {
+                    fileUploadInput.click();
+                });
+            }
+            
+            // ========== تحديث أولي ==========
+            updateAllUI();
+            
+            // ========== إخفاء شاشة التحميل ==========
             const loadingScreen = document.getElementById('loadingScreen');
             if (loadingScreen) {
                 setTimeout(() => {
@@ -1363,24 +1786,24 @@
                 }, 2000);
             }
             
-            // ========== مربع الحساب (يظهر عند الضغط على الصورة) ==========
+            // ========== مربع الحساب ==========
             const accountWrapper = document.getElementById('accountWrapper');
             const accountSkeleton = document.getElementById('accountSkeleton');
             const accountBox = document.getElementById('accountBox');
             const profileBtn = document.getElementById('profileBtn');
-            let isAccountLoading = false;
             
-            // فتح نافذة الحساب عند الضغط على صورة المستخدم
             if (profileBtn) {
                 profileBtn.addEventListener('click', function() {
                     if (accountWrapper) {
-                        accountWrapper.style.display = 'flex';
+                        // تحديث البيانات قبل الفتح
+                        currentProfile = getProfile();
+                        selectedAvatar = currentProfile.avatar || '';
+                        updateAllUI();
                         
-                        // إظهار skeleton loader وإخفاء المحتوى الحقيقي
+                        accountWrapper.style.display = 'flex';
                         if (accountSkeleton) accountSkeleton.style.display = 'block';
                         if (accountBox) accountBox.style.display = 'none';
                         
-                        // محاكاة تحميل البيانات لمدة 1 ثانية
                         setTimeout(() => {
                             if (accountSkeleton) accountSkeleton.style.display = 'none';
                             if (accountBox) accountBox.style.display = 'block';
@@ -1389,13 +1812,11 @@
                 });
             }
             
-            // إغلاق مربع الحساب
             const closeAccountBtn = document.getElementById('closeAccountBtn');
             if (closeAccountBtn) {
                 closeAccountBtn.addEventListener('click', function() {
                     if (accountWrapper) {
                         accountWrapper.style.display = 'none';
-                        // إعادة تعيين الحالة
                         setTimeout(() => {
                             if (accountSkeleton) accountSkeleton.style.display = 'block';
                             if (accountBox) accountBox.style.display = 'none';
@@ -1404,7 +1825,6 @@
                 });
             }
             
-            // النقر خارج المربع يغلقه
             if (accountWrapper) {
                 accountWrapper.addEventListener('click', function(e) {
                     if (e.target === accountWrapper) {
@@ -1417,12 +1837,8 @@
                 });
             }
             
-            // ========== باقي الكود ==========
-            
-            // متغير لتخزين الرابط المراد الانتقال إليه بعد التأكيد
+            // ========== الروابط الخارجية وشاشة التأكيد ==========
             let pendingUrl = null;
-            
-            // عناصر شاشة التأكيد
             const exitModal = document.getElementById('exitModal');
             const confirmExitBtn = document.getElementById('confirmExitBtn');
             
@@ -1445,9 +1861,7 @@
             
             if (exitModal) {
                 exitModal.addEventListener('click', function(e) {
-                    if (e.target === exitModal) {
-                        hideExitModal();
-                    }
+                    if (e.target === exitModal) hideExitModal();
                 });
             }
             
@@ -1455,19 +1869,16 @@
                 confirmExitBtn.addEventListener('click', confirmExit);
             }
             
-            // معالجة جميع الروابط الخارجية
             const externalLinks = document.querySelectorAll('.external-link');
             externalLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     const url = this.getAttribute('data-external');
-                    if (url) {
-                        showExitModal(url);
-                    }
+                    if (url) showExitModal(url);
                 });
             });
             
-            // القائمة المنسدلة للتطبيقات
+            // ========== القائمة المنسدلة ==========
             const appsBtn = document.getElementById('appsDropdownBtn');
             const dropdownMenu = document.getElementById('appsDropdownMenu');
             
@@ -1488,78 +1899,37 @@
                 });
             }
             
-            // مودال الدعم الفني
+            // ========== مودال الدعم الفني ==========
             const supportBtn = document.getElementById('supportBtn');
-            const modal = document.getElementById('supportModal');
+            const supportModal = document.getElementById('supportModal');
             const closeModalBtn = document.getElementById('closeModalBtn');
             
-            function openModal() {
-                if (modal) modal.style.display = 'flex';
-            }
+            function openModal() { if (supportModal) supportModal.style.display = 'flex'; }
+            function closeModal() { if (supportModal) supportModal.style.display = 'none'; }
             
-            function closeModal() {
-                if (modal) modal.style.display = 'none';
-            }
-            
-            if (supportBtn) {
-                supportBtn.addEventListener('click', openModal);
-            }
-            
-            if (closeModalBtn) {
-                closeModalBtn.addEventListener('click', closeModal);
-            }
-            
-            if (modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === modal) {
-                        closeModal();
-                    }
+            if (supportBtn) supportBtn.addEventListener('click', openModal);
+            if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+            if (supportModal) {
+                supportModal.addEventListener('click', function(e) {
+                    if (e.target === supportModal) closeModal();
                 });
             }
             
-            // مودال الإشعارات
+            // ========== مودال الإشعارات ==========
             const notificationBtn = document.getElementById('notificationBtn');
             const notificationModal = document.getElementById('notificationModal');
             const closeNotificationBtn = document.getElementById('closeNotificationModalBtn');
             
-            function openNotificationModal() {
-                if (notificationModal) notificationModal.style.display = 'flex';
-            }
+            function openNotificationModal() { if (notificationModal) notificationModal.style.display = 'flex'; }
+            function closeNotificationModal() { if (notificationModal) notificationModal.style.display = 'none'; }
             
-            function closeNotificationModal() {
-                if (notificationModal) notificationModal.style.display = 'none';
-            }
-            
-            if (notificationBtn) {
-                notificationBtn.addEventListener('click', openNotificationModal);
-            }
-            
-            if (closeNotificationBtn) {
-                closeNotificationBtn.addEventListener('click', closeNotificationModal);
-            }
-            
+            if (notificationBtn) notificationBtn.addEventListener('click', openNotificationModal);
+            if (closeNotificationBtn) closeNotificationBtn.addEventListener('click', closeNotificationModal);
             if (notificationModal) {
                 notificationModal.addEventListener('click', function(e) {
-                    if (e.target === notificationModal) {
-                        closeNotificationModal();
-                    }
+                    if (e.target === notificationModal) closeNotificationModal();
                 });
             }
-            
-            // الروابط الداخلية
-            const internalNavLinks = document.querySelectorAll('.nav-links a, .card-header a:not(.external-link)');
-            internalNavLinks.forEach(link => {
-                if (!link.classList.contains('external-link')) {
-                    link.addEventListener('click', function(e) {
-                        if (this.getAttribute('href') && this.getAttribute('href') !== '#') {
-                            return;
-                        }
-                        e.preventDefault();
-                        const text = this.innerText || 'الصفحة';
-                        alert(`جاري الانتقال إلى ${text}`);
-                    });
-                }
-            });
         });
     </script>
 </body>
